@@ -118,7 +118,7 @@ export const login = async (req, res) => {
 
 export const getMyself = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select(".password");
+        const user = await User.findById(req.user.id).select("-password");
         if(!user) {
             return res.status(404).json({
                 message: "User not found!"
@@ -193,7 +193,7 @@ export const forgotPassword = async ( req, res ) => {
         user.resetPasswordExpire = resetPasswordExpire;
         await user.save()
 
-        const clientUrl = "http://localhost:5173";
+        const clientUrl = process.env.CLIENT_URL;
         const resetUrl = `${clientUrl}/reset-password/${resetToken}`;
         const message = `
             <h2>Password Reset Request</h2>
