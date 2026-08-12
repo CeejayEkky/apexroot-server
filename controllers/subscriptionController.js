@@ -5,16 +5,16 @@ const getPlanDetails = (plan) => {
   if (plan === "monthly") {
     return {
       plan,
-      amount: 8000,
       planCode: process.env.PAYSTACK_MONTHLY_PLAN_CODE,
+      amount: 800000,
     };
   }
 
   if (plan === "quarterly") {
     return {
       plan,
-      amount: 15000,
       planCode: process.env.PAYSTACK_QUARTERLY_PLAN_CODE,
+      amount: 1500000,
     };
   }
 
@@ -59,24 +59,29 @@ export const initializeSubscription = async (req, res) => {
       });
     }
 
-    console.log("========== PAYSTACK SUBSCRIPTION ==========");
-    console.log("Selected plan:", plan);
-    console.log("Paystack plan code:", planDetails.planCode);
-    console.log("User email:", user.email);
-    console.log("Paystack key exists:", !!process.env.PAYSTACK_SECRET_KEY);
-    console.log("============================================");
+    const planResponse = await paystack.get(
+  `/plan/${planDetails.planCode}`
+);
 
-    const response = await paystack.post("/transaction/initialize", {
-      email: user.email,
-      plan: planDetails.planCode,
-      metadata: {
-        userId: user._id.toString(),
-        plan,
-      },
-      callback_url: `${process.env.CLIENT_URL}/subscription/verify`,
-    });
+console.log("========== PAYSTACK PLAN ==========");
+console.log(planResponse.data.data);
+console.log("===================================");
 
-    console.log("Paystack initialization successful.");
+    
+    const response = await paystack.post(
+      "/transaction/initialize",
+      {
+        email: user.email,
+        amount: planDetails.amount,
+        currency: "NGN",
+        plan: planDetails.planCode,
+        metadata: {
+          userId: user._id.toString(),
+          plan,
+        },
+        callback_url: `${process.env.CLIENT_URL}/subscription/verify`,
+      }
+    );
 
     return res.status(200).json({
       success: true,
@@ -86,32 +91,16 @@ export const initializeSubscription = async (req, res) => {
       reference: response.data.data.reference,
     });
   } catch (error) {
-    console.error(
-      "========== PAYSTACK ERROR =========="
-    );
-
-    console.error(
-      "Status:",
-      error.response?.status
-    );
-
-    console.error(
-      "Paystack response:",
-      error.response?.data
-    );
-
-    console.error(
-      "Message:",
-      error.message
-    );
-
-    console.error(
-      "===================================="
-    );
+    console.error("========== SUBSCRIPTION ERROR ==========");
+    console.error("Message:", error.message);
+    console.error("Response:", error.response?.data);
+    console.error("Status:", error.response?.status);
+    console.error("========================================");
 
     return res.status(500).json({
       message:
         error.response?.data?.message ||
+        error.message ||
         "Unable to initialize subscription payment.",
     });
   }
