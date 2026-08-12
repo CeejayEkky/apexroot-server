@@ -58,15 +58,6 @@ export const initializeSubscription = async (req, res) => {
         message: "Paystack plan is not configured.",
       });
     }
-
-    const planResponse = await paystack.get(
-  `/plan/${planDetails.planCode}`
-);
-
-console.log("========== PAYSTACK PLAN ==========");
-console.log(planResponse.data.data);
-console.log("===================================");
-
     
     const response = await paystack.post(
       "/transaction/initialize",
@@ -91,12 +82,7 @@ console.log("===================================");
       reference: response.data.data.reference,
     });
   } catch (error) {
-    console.error("========== SUBSCRIPTION ERROR ==========");
-    console.error("Message:", error.message);
-    console.error("Response:", error.response?.data);
-    console.error("Status:", error.response?.status);
-    console.error("========================================");
-
+    
     return res.status(500).json({
       message:
         error.response?.data?.message ||
