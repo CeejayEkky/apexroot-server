@@ -10,10 +10,10 @@ const propertyRouter = express.Router()
 propertyRouter.get("/", getAllProperties)
 propertyRouter.post("/", protect, auth("seller"), checkPropertyLimit, upload.array("images", 10), addProperty);
 propertyRouter.get("/my", protect, auth("seller"), getMyProperties)
-propertyRouter.put("/:id", protect, auth("seller"), requireActiveSubscription, upload.array("images", 10), updateProperty)
-propertyRouter.delete("/:id", protect, auth("seller"), requireActiveSubscription, delProperty)
+propertyRouter.put("/:id", protect, auth("seller"), upload.array("images", 10), updateProperty)
+propertyRouter.delete("/:id", protect, auth("seller"), delProperty)
 propertyRouter.get("/counts", getPropertyCounts)
-propertyRouter.patch("/:id/status", protect, auth("seller"), requireActiveSubscription, updatePropertyStatus)
+propertyRouter.patch("/:id/status", protect, auth("seller"), updatePropertyStatus)
 propertyRouter.get("/:id", getPropertyDets)
 propertyRouter.get("/seller/dashboard", protect, auth("seller"), getSellerDashboard);
 

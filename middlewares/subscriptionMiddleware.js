@@ -43,6 +43,8 @@ export const requireActiveSubscription = async (req, res, next) => {
 
     if (new Date(subscription.expiresAt) <= now) {
       user.subscription.status = "expired";
+      user.subscription.propertyLimit = 4;
+      
       await user.save();
 
       return res.status(403).json({
