@@ -6,7 +6,29 @@ import jwt from "jsonwebtoken";
 
 export const addProperty = async (req, res) => {
   try {
+    const sellerId = req.user._id;
+
+    // Get the seller's current properties
+    const currentPropertyCount = await Property.countDocuments({
+      seller: sellerId,
+    });
+
+    // Get the seller's subscription limit
+    const propertyLimit = req.user.subscription?.propertyLimit ?? 4;
+
+    // Check if seller has reached their property limit
+    if (currentPropertyCount >= propertyLimit) {
+      return res.status(403).json({
+        success: false,
+        message: `You have reached your property limit of ${propertyLimit}. Please upgrade your subscription to add more properties.`,
+        subscriptionRequired: true,
+        propertyLimit,
+        currentPropertyCount,
+      });
+    }
+
     let imgUrls = [];
+
     if (req.files && req.files.length > 0) {
       for (let file of req.files) {
         const result = await uploadToCloudinary(file.buffer);
@@ -23,12 +45,16 @@ export const addProperty = async (req, res) => {
       pincode: req.body.pincode,
       propertyType: req.body.propertyType,
       bhk: req.body.bhk ? String(req.body.bhk) : undefined,
-      bathrooms: req.body.bathrooms ? Number(req.body.bathrooms) : undefined,
-      areaSize: req.body.areaSize ? Number(req.body.areaSize) : undefined,
+      bathrooms: req.body.bathrooms
+        ? Number(req.body.bathrooms)
+        : undefined,
+      areaSize: req.body.areaSize
+        ? Number(req.body.areaSize)
+        : undefined,
       furnishing: req.body.furnishing,
       status: req.body.status,
       images: imgUrls,
-      seller: req.user._id,
+      seller: sellerId,
       amenities: req.body.amenities
         ? Array.isArray(req.body.amenities)
           ? req.body.amenities
@@ -42,15 +68,18 @@ export const addProperty = async (req, res) => {
         : [],
     });
 
-    res.json({
+    res.status(201).json({
       success: true,
       property,
     });
   } catch (error) {
     console.error("ADD_PROPERTY_ERROR:", error);
+
     res.status(500).json({
       success: false,
-      message: error.message || "Internal server error while adding property",
+      message:
+        error.message ||
+        "Internal server error while adding property",
     });
   }
 };

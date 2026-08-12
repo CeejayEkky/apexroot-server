@@ -42,7 +42,7 @@ export const requireActiveSubscription = async (req, res, next) => {
     const now = new Date();
 
     if (new Date(subscription.expiresAt) <= now) {
-      user.subscription.status = "cancelled";
+      user.subscription.status = "expired";
       await user.save();
 
       return res.status(403).json({

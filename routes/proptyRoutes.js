@@ -8,9 +8,9 @@ import { checkPropertyLimit } from '../middlewares/propertyLimitMiddleware.js';
 const propertyRouter = express.Router()
 
 propertyRouter.get("/", getAllProperties)
-propertyRouter.post("/", protect, auth("seller"), upload.array("images", 10), requireActiveSubscription, checkPropertyLimit, addProperty);
+propertyRouter.post("/", protect, auth("seller"), requireActiveSubscription, checkPropertyLimit, upload.array("images", 10), addProperty);
 propertyRouter.get("/my", protect, auth("seller"), requireActiveSubscription, getMyProperties)
-propertyRouter.put("/:id", protect, auth("seller"), upload.array("images", 10), requireActiveSubscription, updateProperty)
+propertyRouter.put("/:id", protect, auth("seller"), requireActiveSubscription, upload.array("images", 10), updateProperty)
 propertyRouter.delete("/:id", protect, auth("seller"), requireActiveSubscription, delProperty)
 propertyRouter.get("/counts", getPropertyCounts)
 propertyRouter.patch("/:id/status", protect, auth("seller"), requireActiveSubscription, updatePropertyStatus)

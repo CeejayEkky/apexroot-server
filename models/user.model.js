@@ -59,7 +59,14 @@ const userSchema = new mongoose.Schema(
 
       status: {
         type: String,
-        enum: ["inactive", "active", "non-renewing", "attention", "cancelled"],
+        enum: [
+          "inactive",
+          "active",
+          "non-renewing",
+          "attention",
+          "cancelled",
+          "expired",
+        ],
         default: "inactive",
       },
 

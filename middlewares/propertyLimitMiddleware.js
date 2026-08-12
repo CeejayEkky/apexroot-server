@@ -19,7 +19,7 @@ export const checkPropertyLimit = async (req, res, next) => {
       });
     }
 
-    const propertyLimit = user.subscription?.propertyLimit ?? 4;
+    const propertyLimit = user.subscription?.propertyLimit;
 
     const propertyCount = await Property.countDocuments({
       seller: user._id,
