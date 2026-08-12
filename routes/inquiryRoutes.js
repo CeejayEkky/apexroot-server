@@ -6,7 +6,7 @@ import { requireActiveSubscription } from '../middlewares/subscriptionMiddleware
 const inquiryRouter = express.Router()
 
 inquiryRouter.post("/", protect, auth("buyer"), sendInquiry);
-inquiryRouter.get("/seller", protect, auth("seller"), requireActiveSubscription, getSellerInquiries);
+inquiryRouter.get("/seller", protect, auth("seller"), getSellerInquiries);
 
 inquiryRouter.patch("/:id/read", protect, markAsRead)
 
