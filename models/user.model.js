@@ -63,6 +63,11 @@ const userSchema = new mongoose.Schema(
         default: "inactive",
       },
 
+      propertyLimit: {
+        type: Number,
+        default: 4,
+      },
+
       paystackCustomerCode: {
         type: String,
         default: null,

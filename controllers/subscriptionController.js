@@ -149,16 +149,20 @@ export const verifySubscription = async (req, res) => {
       expiresAt.setMonth(expiresAt.getMonth() + 3);
     }
 
+    const propertyLimit = selectedPlan === "monthly" ? 10 : 10;
+
     user.subscription = {
       ...user.subscription,
       plan: selectedPlan,
       status: "active",
+      propertyLimit,
       paystackCustomerCode:
         payment.customer?.customer_code || null,
       paystackPlanCode:
         payment.plan_object?.plan_code ||
         payment.plan ||
         null,
+        
       startDate: now,
       nextPaymentDate: expiresAt,
       expiresAt,
