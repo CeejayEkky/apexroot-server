@@ -19,7 +19,17 @@ export const checkPropertyLimit = async (req, res, next) => {
       });
     }
 
-    const propertyLimit = user.subscription?.propertyLimit;
+    let propertyLimit = 4;
+
+    const subscription = user.subscription;
+
+    if (
+      subscription?.status === "active" &&
+      subscription?.expiresAt &&
+      new Date(subscription.expiresAt) > new Date()
+    ) {
+      propertyLimit = subscription.propertyLimit ?? 4;
+    }
 
     const propertyCount = await Property.countDocuments({
       seller: user._id,
@@ -32,6 +42,7 @@ export const checkPropertyLimit = async (req, res, next) => {
         propertyLimit,
         currentPropertyCount: propertyCount,
         limitReached: true,
+        subscriptionRequired: true,
       });
     }
 

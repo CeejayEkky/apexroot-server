@@ -27,36 +27,58 @@ export const handlePaystackWebhook = async (req, res) => {
       const userId = metadata?.userId;
       const plan = metadata?.plan;
 
-      if (userId && plan) {
-        const user = await User.findById(userId);
-
-        if (user) {
-          const now = new Date();
-          const expiresAt = new Date(now);
-
-          if (plan === "monthly") {
-            expiresAt.setMonth(expiresAt.getMonth() + 1);
-          }
-
-          if (plan === "quarterly") {
-            expiresAt.setMonth(expiresAt.getMonth() + 3);
-          }
-
-          user.subscription = {
-            ...user.subscription,
-            plan,
-            status: "active",
-            propertyLimit: 10,
-            paystackCustomerCode:
-              event.data.customer?.customer_code || null,
-            startDate: now,
-            nextPaymentDate: expiresAt,
-            expiresAt,
-          };
-
-          await user.save();
-        }
+      if (!userId || !plan) {
+        return res.sendStatus(200);
       }
+
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.sendStatus(200);
+      }
+
+      const now = new Date();
+      const expiresAt = new Date(now);
+
+      if (plan === "monthly") {
+        expiresAt.setMonth(expiresAt.getMonth() + 1);
+      }
+
+      if (plan === "quarterly") {
+        expiresAt.setMonth(expiresAt.getMonth() + 3);
+      }
+
+      user.subscription = {
+        ...user.subscription,
+        plan,
+        status: "active",
+        propertyLimit: plan === "monthly" ? 10 : plan === "quarterly" ? 30 : user.subscription?.propertyLimit || 4,
+
+        paystackCustomerCode:
+          event.data.customer?.customer_code ||
+          user.subscription?.paystackCustomerCode ||
+          null,
+
+        paystackSubscriptionCode:
+          event.data.subscription_code ||
+          user.subscription?.paystackSubscriptionCode ||
+          null,
+
+        paystackPlanCode:
+          event.data.plan_object?.plan_code ||
+          user.subscription?.paystackPlanCode ||
+          null,
+
+        startDate: now,
+        nextPaymentDate: expiresAt,
+        expiresAt,
+      };
+
+      await user.save();
+
+      console.log(
+        `Subscription renewed for ${user.email} - ${plan}`
+      );
     }
 
     return res.sendStatus(200);

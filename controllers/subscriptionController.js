@@ -149,7 +149,7 @@ export const verifySubscription = async (req, res) => {
       expiresAt.setMonth(expiresAt.getMonth() + 3);
     }
 
-    const propertyLimit = selectedPlan === "monthly" ? 12 : 30;
+    const propertyLimit = selectedPlan === "monthly" ? 12 : selectedPlan === "quarterly" ? 30 : 4;
 
     user.subscription = {
       ...user.subscription,
