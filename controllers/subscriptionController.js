@@ -5,6 +5,7 @@ const getPlanDetails = (plan) => {
   if (plan === "monthly") {
     return {
       plan,
+      amount: 8000,
       planCode: process.env.PAYSTACK_MONTHLY_PLAN_CODE,
     };
   }
@@ -12,6 +13,7 @@ const getPlanDetails = (plan) => {
   if (plan === "quarterly") {
     return {
       plan,
+      amount: 15000,
       planCode: process.env.PAYSTACK_QUARTERLY_PLAN_CODE,
     };
   }
@@ -57,6 +59,13 @@ export const initializeSubscription = async (req, res) => {
       });
     }
 
+    console.log("========== PAYSTACK SUBSCRIPTION ==========");
+    console.log("Selected plan:", plan);
+    console.log("Paystack plan code:", planDetails.planCode);
+    console.log("User email:", user.email);
+    console.log("Paystack key exists:", !!process.env.PAYSTACK_SECRET_KEY);
+    console.log("============================================");
+
     const response = await paystack.post("/transaction/initialize", {
       email: user.email,
       plan: planDetails.planCode,
@@ -67,6 +76,8 @@ export const initializeSubscription = async (req, res) => {
       callback_url: `${process.env.CLIENT_URL}/subscription/verify`,
     });
 
+    console.log("Paystack initialization successful.");
+
     return res.status(200).json({
       success: true,
       message: "Subscription payment initialized.",
@@ -76,8 +87,26 @@ export const initializeSubscription = async (req, res) => {
     });
   } catch (error) {
     console.error(
-      "Initialize subscription error:",
-      error.response?.data || error.message,
+      "========== PAYSTACK ERROR =========="
+    );
+
+    console.error(
+      "Status:",
+      error.response?.status
+    );
+
+    console.error(
+      "Paystack response:",
+      error.response?.data
+    );
+
+    console.error(
+      "Message:",
+      error.message
+    );
+
+    console.error(
+      "===================================="
     );
 
     return res.status(500).json({
