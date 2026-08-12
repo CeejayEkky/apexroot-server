@@ -1,56 +1,102 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     email: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     role: {
-        type: String,
-        enum: ["buyer", "seller", "admin"],
-        default: "buyer"
+      type: String,
+      enum: ["buyer", "seller", "admin"],
+      default: "buyer",
     },
     phone: {
-        type: String
+      type: String,
     },
     isBlocked: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     profilePic: {
-        type: String,
+      type: String,
     },
     address: {
-        type: String
+      type: String,
     },
     isApproved: {
-        type: Boolean, 
-        default: true
+      type: Boolean,
+      default: true,
     },
     isVerified: {
-        type: Boolean,
-        default: false
+      type: Boolean,
+      default: false,
     },
     verificationToken: {
-        type: String
+      type: String,
     },
     resetPasswordToken: {
-        type: String,
+      type: String,
     },
     resetPasswordExpire: {
-        type: Date
-    }
-}, { timestamps: true })
+      type: Date,
+    },
+    subscription: {
+      plan: {
+        type: String,
+        enum: ["free", "monthly", "quarterly"],
+        default: "free",
+      },
 
-const User = mongoose.model("User", userSchema)
+      status: {
+        type: String,
+        enum: ["inactive", "active", "non-renewing", "attention", "cancelled"],
+        default: "inactive",
+      },
 
-export default User
+      paystackCustomerCode: {
+        type: String,
+        default: null,
+      },
+
+      paystackSubscriptionCode: {
+        type: String,
+        default: null,
+      },
+
+      paystackPlanCode: {
+        type: String,
+        default: null,
+      },
+
+      startDate: {
+        type: Date,
+        default: null,
+      },
+
+      nextPaymentDate: {
+        type: Date,
+        default: null,
+      },
+
+      expiresAt: {
+        type: Date,
+        default: null,
+      },
+    },
+  },
+  { timestamps: true },
+);
+
+const User = mongoose.model("User", userSchema);
+
+export default User;

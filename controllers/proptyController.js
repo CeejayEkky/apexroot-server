@@ -309,6 +309,12 @@ export const getPropertyDets = async (req, res) => {
       "name email phone profilePic",
     );
     console.log("Property:", property);
+    if (!property) {
+      return res.status(404).json({
+        success: false,
+        message: "Property not found!",
+      });
+    }
     console.log("Seller:", property.seller);
     if (!property) {
       return res.status(404).json({

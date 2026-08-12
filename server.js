@@ -13,6 +13,7 @@ import wishlistRouter from './routes/wishlistRoutes.js'
 import contactRouter from './routes/contactRoutes.js'
 import adminRouter from './routes/adminRoutes.js'
 import chatRouter from './routes/chatRoutes.js'
+import subscriptionRouter from "./routes/subscriptionRoutes.js";
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -42,6 +43,7 @@ app.use("/api/inquiry", inquiryRouter)
 app.use("/api/wishlist", wishlistRouter)
 app.use("/api/contact", contactRouter)
 app.use("/api/chat", chatRouter)
+app.use("/api/subscription", subscriptionRouter);
 
 app.use("/api/admin", adminRouter)
 
