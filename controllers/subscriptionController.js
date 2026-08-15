@@ -6,7 +6,7 @@ const getPlanDetails = (plan) => {
     return {
       plan,
       planCode: process.env.PAYSTACK_MONTHLY_PLAN_CODE,
-      amount: 800000,
+      amount: 500000,
     };
   }
 
@@ -14,7 +14,7 @@ const getPlanDetails = (plan) => {
     return {
       plan,
       planCode: process.env.PAYSTACK_QUARTERLY_PLAN_CODE,
-      amount: 1500000,
+      amount: 1000000,
     };
   }
 
