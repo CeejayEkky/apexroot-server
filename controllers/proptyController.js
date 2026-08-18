@@ -95,7 +95,7 @@ export const getMyProperties = async (req, res) => {
       properties,
     });
   } catch (error) {
-    console.error("ADD_PROPERTY_ERROR:", error);
+    console.error("GET_MY_PROPERTIES_ERROR:", error);
     res.status(500).json({
       success: false,
       message: error.message,
